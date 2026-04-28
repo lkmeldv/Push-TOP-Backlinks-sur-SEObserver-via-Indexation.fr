@@ -21,6 +21,15 @@
     </div>
   </header>
 
+  <section id="setupBanner" class="setup-banner hidden">
+    <strong>Configure ton token API pour commencer</strong>
+    <p>
+      1. Recupere ton token sur
+      <a href="https://indexation.fr/api-tokens" target="_blank" rel="noreferrer">indexation.fr/api-tokens</a>.<br>
+      2. Colle-le dans <em>Reglages</em> ci-dessous, puis clique <em>Enregistrer</em>.
+    </p>
+  </section>
+
   <section class="panel">
     <div class="row">
       <div class="row-label">Domaine analyse</div>
@@ -60,13 +69,18 @@
 
   <section id="result" class="panel result hidden"></section>
 
-  <details class="panel small">
+  <details class="panel small" id="settingsPanel">
     <summary>Reglages</summary>
     <label class="field">
-      <span>API token</span>
-      <input type="password" id="apiToken" placeholder="Bearer token..." />
+      <span>Token API indexation.fr</span>
+      <input type="password" id="apiToken" placeholder="Colle ton token ici..." autocomplete="off" />
     </label>
+    <p class="hint">
+      Pas encore de token ?
+      <a href="https://indexation.fr/api-tokens" target="_blank" rel="noreferrer">Genere-le ici</a>.
+    </p>
     <button id="saveSettings" class="btn ghost small">Enregistrer</button>
+    <button id="clearSettings" class="btn ghost small" title="Supprimer le token enregistre">Reinitialiser</button>
   </details>
 
   <footer>

@@ -87,16 +87,28 @@ Télécharge l'archive et dézippe-la.
 
 ## Configuration du token
 
-Au premier lancement, tu dois renseigner ton token API indexation.fr :
+Au premier lancement, l'extension affiche automatiquement une bannière jaune qui te guide :
 
-1. Clique sur l'icône de l'extension dans la barre d'outils.
-2. Déroule **Réglages**.
-3. Colle ton token (format `Bearer ...` sans le préfixe "Bearer").
-4. Clique **Enregistrer**.
+### Étape 1 : générer un token sur indexation.fr
 
-Le token est stocké dans `chrome.storage.sync` (synchronisé entre tes appareils Chrome connectés au même compte Google).
+1. Connecte-toi à [https://indexation.fr](https://indexation.fr).
+2. Va dans **Mon compte > API tokens** (URL directe : [https://indexation.fr/api-tokens](https://indexation.fr/api-tokens)).
+3. Clique **Créer un token**, donne-lui un nom (ex: `Chrome SEObserver`).
+4. **Copie le token** affiché (il ne sera plus visible après).
 
-> **Sécurité** : aucun token n'est hardcodé dans le code source. L'extension refuse les appels API tant que le token n'est pas configuré.
+### Étape 2 : ajouter le token dans l'extension
+
+1. Clique sur l'icône de l'extension dans la barre d'outils Chrome.
+2. La section **Réglages** est ouverte automatiquement au premier lancement.
+3. Colle ton token dans le champ `Token API indexation.fr`.
+4. Clique **Enregistrer** : la bannière disparaît, le solde de crédits s'affiche, l'extension est prête.
+
+### Stockage
+
+- Le token est stocké via `chrome.storage.sync` (synchronisé entre tes appareils Chrome connectés au même compte Google, **jamais envoyé à un tiers**).
+- Pour le supprimer : popup > Réglages > **Réinitialiser**.
+
+> **Sécurité** : aucun token n'est hardcodé dans le code source du repo. L'extension refuse les appels API tant que le token n'est pas configuré et affiche un message clair.
 
 ---
 

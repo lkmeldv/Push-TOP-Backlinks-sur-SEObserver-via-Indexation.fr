@@ -12,7 +12,10 @@ const els = {
   urls: $("#urlsList"),
   result: $("#result"),
   apiToken: $("#apiToken"),
-  saveSettings: $("#saveSettings")
+  saveSettings: $("#saveSettings"),
+  clearSettings: $("#clearSettings"),
+  setupBanner: $("#setupBanner"),
+  settingsPanel: $("#settingsPanel")
 };
 
 let cache = {
@@ -175,14 +178,38 @@ function onToggleUrls() {
 async function loadSettings() {
   const { apiToken } = await chrome.storage.sync.get(["apiToken"]);
   if (apiToken) els.apiToken.value = apiToken;
+  toggleSetupBanner(!apiToken);
+}
+
+function toggleSetupBanner(show) {
+  if (show) {
+    els.setupBanner.classList.remove("hidden");
+    els.settingsPanel.setAttribute("open", "");
+  } else {
+    els.setupBanner.classList.add("hidden");
+  }
 }
 
 async function saveSettings() {
   const token = els.apiToken.value.trim();
+  if (!token) {
+    showResult(false, "Token vide", "Colle ton token API avant d'enregistrer.");
+    return;
+  }
   await chrome.storage.sync.set({ apiToken: token });
   els.saveSettings.textContent = "Enregistre";
   setTimeout(() => (els.saveSettings.textContent = "Enregistrer"), 1200);
+  toggleSetupBanner(false);
   refreshBalance();
+  refreshProjects();
+}
+
+async function clearSettings() {
+  await chrome.storage.sync.remove(["apiToken"]);
+  els.apiToken.value = "";
+  toggleSetupBanner(true);
+  els.balance.textContent = "?";
+  showResult(true, "Token supprime", "Le token API a ete reinitialise.");
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -190,6 +217,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   els.submit.addEventListener("click", onSubmit);
   els.toggleUrls.addEventListener("click", onToggleUrls);
   els.saveSettings.addEventListener("click", saveSettings);
+  els.clearSettings.addEventListener("click", clearSettings);
 
   await loadSettings();
   refreshBalance();
