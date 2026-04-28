@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "SEObserver -> Indexation.fr",
+  "short_name": "SEO->Index",
+  "version": "1.0.0",
+  "description": "Recupere les top backlinks SEObserver et les pousse a indexation.fr en un clic.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "https://app.seobserver.com/*",
+    "https://indexation.fr/*"
+  ],
+  "action": {
+    "default_title": "SEObserver -> Indexation.fr",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://app.seobserver.com/sites/view/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

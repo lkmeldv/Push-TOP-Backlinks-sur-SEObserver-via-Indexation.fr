@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SEObserver -> Indexation.fr</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>SEObserver -> Indexation.fr</h1>
+        <p class="sub">Top backlinks vers indexation.fr en un clic</p>
+      </div>
+    </div>
+    <div class="balance" id="balanceBox" title="Solde indexation.fr">
+      <span class="balance-label">Credits</span>
+      <span class="balance-value" id="balanceValue">...</span>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="row">
+      <div class="row-label">Domaine analyse</div>
+      <div class="row-value" id="domainValue">-</div>
+    </div>
+    <div class="row">
+      <div class="row-label">URLs detectees</div>
+      <div class="row-value" id="countValue">0</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <label class="field">
+      <span>Projet indexation.fr</span>
+      <select id="projectSelect">
+        <option value="">- Aucun -</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Top N backlinks (max)</span>
+      <input type="number" id="topN" min="1" max="1000" value="100" />
+    </label>
+  </section>
+
+  <section class="panel actions">
+    <button id="rescanBtn" class="btn ghost">Re-scanner la page</button>
+    <button id="submitBtn" class="btn primary">Envoyer a indexation.fr</button>
+  </section>
+
+  <section class="panel" id="urlsPanel">
+    <div class="row between">
+      <strong>Apercu URLs</strong>
+      <button id="toggleUrls" class="link">Afficher</button>
+    </div>
+    <ul id="urlsList" class="urls hidden"></ul>
+  </section>
+
+  <section id="result" class="panel result hidden"></section>
+
+  <details class="panel small">
+    <summary>Reglages</summary>
+    <label class="field">
+      <span>API token</span>
+      <input type="password" id="apiToken" placeholder="Bearer token..." />
+    </label>
+    <button id="saveSettings" class="btn ghost small">Enregistrer</button>
+  </details>
+
+  <footer>
+    <span>v1.0.0</span>
+    <a href="https://indexation.fr/api/v1" target="_blank" rel="noreferrer">API doc</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
