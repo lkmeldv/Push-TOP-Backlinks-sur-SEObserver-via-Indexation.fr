@@ -120,7 +120,7 @@ async function refreshProjects() {
   for (const p of r.projects) {
     if (!p) continue;
     const opt = document.createElement("option");
-    opt.value = String(p.id ?? p.project_id ?? "");
+    opt.value = String(p.ulid ?? p.id ?? p.project_id ?? "");
     const name = p.name || p.title || `Projet ${opt.value}`;
     const count = p.urls_count ?? p.url_count ?? p.count ?? null;
     opt.textContent = count != null ? `${name} (${count})` : name;

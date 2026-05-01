@@ -1,6 +1,24 @@
 (() => {
   const CONTAINER_SELECTOR = "#site_view_top_backlinks";
 
+  function isExtAlive() {
+    try {
+      return Boolean(chrome?.runtime?.id);
+    } catch {
+      return false;
+    }
+  }
+
+  function safeStorageSet(data) {
+    if (!isExtAlive()) return false;
+    try {
+      chrome.storage.local.set(data);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function getContainer() {
     return document.querySelector(CONTAINER_SELECTOR);
   }
@@ -71,8 +89,12 @@
     fab.appendChild(label);
     fab.addEventListener("click", async () => {
       if (fab.dataset.busy === "1") return;
+      if (!isExtAlive()) {
+        flashToast("Extension rechargee. Recharge la page SEObserver (F5).", "warn");
+        return;
+      }
       const { urls, analyzedDomain, found } = extractTopBacklinks();
-      chrome.storage.local.set({
+      safeStorageSet({
         lastScan: { when: Date.now(), source: location.href, analyzedDomain, urls, found }
       });
       if (!found) {
@@ -126,6 +148,10 @@
 
   function sendMessage(msg) {
     return new Promise((resolve) => {
+      if (!isExtAlive()) {
+        resolve({ ok: false, error: "Extension context invalidated" });
+        return;
+      }
       try {
         chrome.runtime.sendMessage(msg, (resp) => {
           if (chrome.runtime.lastError) {
@@ -140,16 +166,22 @@
     });
   }
 
-  chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-    if (msg?.type === "EXTRACT_BACKLINKS") {
-      const data = extractTopBacklinks();
-      sendResponse({ ok: true, ...data });
-    }
-  });
+  try {
+    chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+      if (msg?.type === "EXTRACT_BACKLINKS") {
+        const data = extractTopBacklinks();
+        sendResponse({ ok: true, ...data });
+      }
+    });
+  } catch {}
 
   function initialScan() {
+    if (!isExtAlive()) {
+      stopObserver();
+      return;
+    }
     const { urls, analyzedDomain, found } = extractTopBacklinks();
-    chrome.storage.local.set({
+    safeStorageSet({
       lastScan: {
         when: Date.now(),
         source: location.href,
@@ -166,7 +198,24 @@
   }, 1200);
 
   let mutTimer = null;
-  const obs = new MutationObserver(() => {
+  let obs = null;
+
+  function stopObserver() {
+    if (obs) {
+      try { obs.disconnect(); } catch {}
+      obs = null;
+    }
+    if (mutTimer) {
+      clearTimeout(mutTimer);
+      mutTimer = null;
+    }
+  }
+
+  obs = new MutationObserver(() => {
+    if (!isExtAlive()) {
+      stopObserver();
+      return;
+    }
     if (mutTimer) clearTimeout(mutTimer);
     mutTimer = setTimeout(initialScan, 1500);
   });

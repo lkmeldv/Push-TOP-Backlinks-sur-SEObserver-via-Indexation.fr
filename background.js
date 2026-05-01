@@ -80,7 +80,7 @@ async function ensureProject(name) {
   const cacheKey = `projectCache:${name}`;
   const cache = await chrome.storage.local.get([cacheKey]);
   const cached = cache[cacheKey];
-  if (cached?.id) {
+  if (cached?.ulid) {
     return cached;
   }
   let project = await findProjectByName(name);
@@ -88,8 +88,10 @@ async function ensureProject(name) {
     const created = await createProject(name);
     project = created?.data || created?.project || created;
   }
-  if (project?.id) {
-    await chrome.storage.local.set({ [cacheKey]: { id: project.id, name: project.name } });
+  if (project?.ulid) {
+    await chrome.storage.local.set({
+      [cacheKey]: { ulid: project.ulid, id: project.id, name: project.name }
+    });
   }
   return project;
 }
@@ -105,8 +107,8 @@ async function submitUrls({ urls, project_id, site_id }) {
   const results = [];
   for (const batch of batches) {
     const body = { urls: batch };
-    if (project_id) body.project_id = Number(project_id);
-    if (site_id) body.site_id = Number(site_id);
+    if (project_id) body.project_id = String(project_id);
+    if (site_id) body.site_id = String(site_id);
     const res = await apiFetch("/urls", {
       method: "POST",
       body: JSON.stringify(body)
@@ -121,10 +123,10 @@ async function submitTopBacklinks({ urls }) {
     throw new Error("Aucune URL extraite.");
   }
   const project = await ensureProject(PROJECT_NAME);
-  if (!project?.id) {
-    throw new Error("Impossible de creer/trouver le projet.");
+  if (!project?.ulid) {
+    throw new Error("Impossible de creer/trouver le projet (ULID manquant).");
   }
-  const result = await submitUrls({ urls, project_id: project.id });
+  const result = await submitUrls({ urls, project_id: project.ulid });
   return { project, result };
 }
 
